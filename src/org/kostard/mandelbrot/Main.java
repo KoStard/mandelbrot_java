@@ -8,6 +8,9 @@ public class Main extends JComponent {
     public static final int WIDTH = 800;
     public static final int HEIGHT = 600;
     private BufferedImage buffer;
+    private float centerPosX = 0;
+    private float centerPosY = 0;
+    private float zoom = 0.6f;
 
     public static void main(String[] args) {
         Main main = new Main();
@@ -20,6 +23,7 @@ public class Main extends JComponent {
         buffer = new BufferedImage(WIDTH, HEIGHT, BufferedImage.TYPE_INT_RGB);
         renderMandelbrot();
 
+        frame.setResizable(false);
         frame.setContentPane(this);
         frame.pack();
         frame.setVisible(true);
@@ -31,9 +35,11 @@ public class Main extends JComponent {
     }
 
     private Color calculateColorForPoint(int pX, int pY) {
-        float s = Math.max(WIDTH, HEIGHT) / 4;
-        float x0 = (float) pX / s;
-        float y0 = (float) pY / s;
+        float w = (float) WIDTH * zoom / 2;
+        float h = (float) HEIGHT * zoom / 2;
+        float d = Math.max(w, h);
+        float x0 = centerPosX + (float) (pX - WIDTH / 2) / d;
+        float y0 = centerPosY + (float) (pY - HEIGHT / 2) / d;
 
         float x = 0, y = 0;
 
@@ -53,7 +59,7 @@ public class Main extends JComponent {
     private void renderMandelbrot() {
         for (int y = 0; y < HEIGHT; y++) {
             for (int x = 0; x < WIDTH; x++) {
-                buffer.setRGB(x, y, calculateColorForPoint(x - WIDTH / 2, y - HEIGHT / 2).getRGB());
+                buffer.setRGB(x, y, calculateColorForPoint(x, y).getRGB());
             }
         }
     }
