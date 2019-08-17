@@ -8,21 +8,28 @@ public class Main extends JComponent {
     public static final int WIDTH = 800;
     public static final int HEIGHT = 600;
     private BufferedImage buffer;
-    private float centerPosX = 0;
-    private float centerPosY = 0;
-    private float zoom = 0.6f;
+    public float centerPosX = 0;
+    public float centerPosY = 0;
+    public float zoom = 0.6f;
 
     public static void main(String[] args) {
         Main main = new Main();
     }
+    private JFrame frame;
 
     public Main() {
-        JFrame frame = new JFrame("Mandelbrot");
+        frame = new JFrame("Mandelbrot");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
         buffer = new BufferedImage(WIDTH, HEIGHT, BufferedImage.TYPE_INT_RGB);
         renderMandelbrot();
 
+        EventsHandler eventsHandler = new EventsHandler(this);
+
+        frame.addMouseListener(eventsHandler);
+        frame.addMouseMotionListener(eventsHandler);
+        frame.addMouseWheelListener(eventsHandler);
+        frame.addKeyListener(eventsHandler);
         frame.setResizable(false);
         frame.setContentPane(this);
         frame.pack();
@@ -64,8 +71,21 @@ public class Main extends JComponent {
         }
     }
 
+    public void moveCamera(float dx, float dy) {
+        centerPosX += dx;
+        centerPosY += dy;
+        renderMandelbrot();
+        frame.repaint();
+    }
+
+    public void increaseZoom(float dz) {
+        zoom *= dz;
+        renderMandelbrot();
+        frame.repaint();
+    }
+
     @Override
-    public void paint(Graphics g) {
+    protected void paintComponent(Graphics g) {
         g.drawImage(buffer, 0, 0, null);
     }
 }
